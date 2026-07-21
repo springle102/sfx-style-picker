@@ -1,0 +1,81 @@
+{
+  "id": "sfx-style-picker",
+  "name": "SFX Style Picker",
+  "version": "1.0.0",
+  "main": "index.html",
+  "manifestVersion": 5,
+  "icons": [
+    {
+      "width": 24,
+      "height": 24,
+      "path": "icons/icon-plugin-dark.png",
+      "scale": [1, 2],
+      "theme": ["darkest", "dark", "medium"]
+    },
+    {
+      "width": 24,
+      "height": 24,
+      "path": "icons/icon-plugin-light.png",
+      "scale": [1, 2],
+      "theme": ["lightest", "light"]
+    }
+  ],
+  "featureFlags": {
+    "CSSNextSupport": true
+  },
+  "host": [
+    {
+      "app": "PS",
+      "minVersion": "24.0.0",
+      "data": {
+        "apiVersion": 2
+      }
+    }
+  ],
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "stylePickerPanel",
+      "label": {
+        "default": "SFX Style Picker"
+      },
+      "minimumSize": {
+        "width": 250,
+        "height": 450
+      },
+      "preferredSize": {
+        "width": 300,
+        "height": 650
+      },
+      "maximumSize": {
+        "width": 3000,
+        "height": 3000
+      },
+      "icons": [
+        {
+          "width": 23,
+          "height": 23,
+          "path": "icons/panel-dark.png",
+          "scale": [1, 2],
+          "theme": ["darkest", "dark", "medium"]
+        },
+        {
+          "width": 23,
+          "height": 23,
+          "path": "icons/panel-light.png",
+          "scale": [1, 2],
+          "theme": ["lightest", "light"]
+        }
+      ]
+    }
+  ],
+  "requiredPermissions": {
+    "localFileSystem": "request",
+    "network": {
+      "domains": [
+        "https://script.google.com",
+        "https://script.googleusercontent.com"
+      ]
+    }
+  }
+}

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Style Picker</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <!-- Giao diện Kích hoạt License -->
+  <div id="license-screen" class="license-screen" style="display: flex;">
+    <div class="license-card">
+      <div class="license-header">
+        <span class="license-logo">🔑</span>
+        <h2>SFX Style Picker</h2>
+      </div>
+      <p class="license-desc">Vui lòng nhập Tên/Email của bạn và License Key được cấp để kích hoạt bản quyền.</p>
+      <div class="license-input-wrapper">
+        <input type="text" id="input-customer-name" placeholder="Nhập tên hoặc email của bạn..." class="premium-input" />
+        <textarea id="input-license-key" placeholder="Dán License Key tại đây..." class="premium-textarea" rows="4"></textarea>
+      </div>
+      <button id="btn-activate-license" class="btn-activate-premium">
+        <span>Kích hoạt ngay</span>
+      </button>
+      <div id="license-error-msg" class="license-error-msg" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Giao diện chính của Plugin (ẩn mặc định) -->
+  <div id="main-app-container" class="panel-container" style="display: none;">
+
+    <!-- Step 1: Segmented Control Tabs -->
+    <div class="segmented-control">
+      <button id="tab-gradient" class="tab-btn active">Gradient</button>
+      <button id="tab-glow" class="tab-btn">Outer Glow</button>
+      <div class="tab-slider"></div>
+    </div>
+
+    <!-- Step 2: Main Action Pick Button -->
+    <div class="pick-section">
+      <button id="btn-pick" class="btn-pick-accent">
+        <span id="btn-pick-text">Pick Gradient</span>
+      </button>
+      <p class="instructions">Chọn vùng trên canvas trước khi bấm.</p>
+    </div>
+
+    <!-- Step 3: Dynamic Preview Area -->
+    <div class="preview-card">
+      <div class="preview-title">PREVIEW</div>
+
+      <!-- Gradient Preview Bar -->
+      <div id="gradient-preview-wrapper" class="preview-content active">
+        <div id="gradient-preview-bar"></div>
+      </div>
+
+      <!-- Outer Glow Circle Preview -->
+      <div id="glow-preview-wrapper" class="preview-content">
+        <div class="glow-checkerboard">
+          <div id="glow-preview-circle" style="cursor: pointer;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Configuration Controls (Mode Specific) -->
+    <div class="controls-section">
+
+      <!-- Gradient Controls -->
+      <div id="gradient-controls" class="mode-controls active">
+        <ul id="gradient-stops-preview-list" class="stops-list"></ul>
+
+        <!-- Gradient Type / Style Select -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="select-gradient-type">Style Gradient</label>
+          </div>
+          <select id="select-gradient-type" class="premium-select">
+            <option value="linear" selected>Linear</option>
+            <option value="radial">Radial</option>
+            <option value="angle">Angle</option>
+            <option value="reflected">Reflected</option>
+            <option value="diamond">Diamond</option>
+          </select>
+        </div>
+
+        <!-- Angle Dial Row -->
+        <div class="control-group" id="angle-control-group">
+          <div class="control-header">
+            <label>Angle</label>
+            <span class="value-display"><span id="val-angle">90</span>°</span>
+          </div>
+          <div class="angle-row">
+            <div class="angle-dial-container">
+              <div class="angle-dial" id="angle-dial">
+                <div class="angle-dial-needle" id="angle-dial-needle"></div>
+              </div>
+            </div>
+            <input type="number" id="input-angle" min="0" max="360" value="90" class="premium-number-input">
+            <span class="unit-label">deg</span>
+          </div>
+        </div>
+
+        <!-- Stroke Config Row -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="stroke-enable-label">
+              <input type="checkbox" id="chk-stroke-enable" checked>
+              <span>Stroke (Viền)</span>
+            </label>
+          </div>
+
+          <div class="stroke-controls-row" id="stroke-controls-row">
+            <div id="stroke-color-swatch" class="color-swatch stroke-input-color" data-hex="#FFFFFF" style="background-color: #FFFFFF;">
+            </div>
+            <div class="stroke-slider-container">
+              <div class="slider-header-sub">
+                <span class="sub-label">Độ dày</span>
+              </div>
+              <div class="stroke-width-field">
+                <input type="number" id="stroke-size" class="premium-number-input stroke-input-width" value="5" min="1" max="100">
+                <span class="unit-label">px</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gradient Opacity -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="slider-gradient-opacity">Opacity Gradient</label>
+            <span id="val-gradient-opacity" class="value-display">100%</span>
+          </div>
+          <input type="range" id="slider-gradient-opacity" min="0" max="100" value="100" class="premium-slider">
+        </div>
+
+      </div>
+
+      <!-- Outer Glow Controls -->
+      <div id="glow-controls" class="mode-controls">
+
+        <!-- Glow Color Swatch Row -->
+        <div class="control-group">
+          <div class="control-header">
+            <label>Màu phát sáng</label>
+          </div>
+          <div class="stroke-controls-row">
+            <div id="glow-color-swatch" class="color-swatch" style="background-color: #FFFFFF;">
+            </div>
+            <span id="glow-color-hex" class="unit-label" style="font-family: monospace;">#FFFFFF</span>
+          </div>
+        </div>
+
+        <!-- Scan Config Header -->
+        <div class="section-sub-title">Cấu hình quét màu</div>
+
+        <!-- Scan Start Slider -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="slider-scan-start">Bắt đầu quét (Inner Offset)</label>
+            <span id="val-scan-start" class="value-display">3 px</span>
+          </div>
+          <input type="range" id="slider-scan-start" min="0" max="30" value="3" class="premium-slider">
+        </div>
+
+        <!-- Scan End Slider -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="slider-scan-end">Kết thúc quét (Outer Offset)</label>
+            <span id="val-scan-end" class="value-display">9 px</span>
+          </div>
+          <input type="range" id="slider-scan-end" min="1" max="100" value="9" class="premium-slider">
+        </div>
+
+        <!-- Apply Config Header -->
+        <div class="section-sub-title" style="margin-top: 5px;">Cấu hình áp dụng</div>
+
+        <!-- Size Slider -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="slider-glow-size">Size</label>
+            <span id="val-glow-size" class="value-display">10 px</span>
+          </div>
+          <input type="range" id="slider-glow-size" min="0" max="250" value="10" class="premium-slider">
+        </div>
+
+        <!-- Spread Slider -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="slider-glow-spread">Spread</label>
+            <span id="val-glow-spread" class="value-display">0%</span>
+          </div>
+          <input type="range" id="slider-glow-spread" min="0" max="100" value="0" class="premium-slider">
+        </div>
+
+        <!-- Range Slider -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="slider-glow-range">Range (Độ mịn)</label>
+            <span id="val-glow-range" class="value-display">50%</span>
+          </div>
+          <input type="range" id="slider-glow-range" min="1" max="100" value="50" class="premium-slider">
+        </div>
+
+        <!-- Opacity Slider -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="slider-glow-opacity">Opacity</label>
+            <span id="val-glow-opacity" class="value-display">100%</span>
+          </div>
+          <input type="range" id="slider-glow-opacity" min="0" max="100" value="100" class="premium-slider">
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Step 5: Fixed Apply Button at Bottom -->
+    <div class="apply-section">
+      <button id="btn-apply" class="btn-apply-success" disabled>
+        <span class="icon">✨</span> Apply to layer
+      </button>
+    </div>
+
+    <!-- Step 6: Status Message Bar -->
+    <div id="status-bar" class="status-bar status-idle">
+      Sẵn sàng
+    </div>
+
+  </div>
+
+  <script src="panel.js"></script>
+</body>
+
+</html>
